@@ -1,0 +1,239 @@
+{
+  "name": "Tiktok",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tiktok-leads",
+        "options": {
+          "rawBody": false,
+          "responseCode": {
+            "values": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        -32
+      ],
+      "id": "a12a1aee-27ff-4d7a-983c-1af7a8710ad9",
+      "name": "Webhook",
+      "webhookId": "aec3f9e3-93b5-4c00-aa3a-1ee2cc146e0e"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.leads",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        704,
+        -32
+      ],
+      "id": "253d81f9-32ca-4004-bbd1-c044300e130c",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const data = item.json;\n  const toEmail = data.email || data.toEmail || \"\";\n\n  const subject = \"can we send you some [Brand] pieces? \ud83e\udd0d\";\n\n  const htmlBody = `\n    <div style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #222;\">\n      <p>Hello,</p>\n      \n      <p>Hope you\u2019re having a great week!</p>\n      \n      <p>I'm [Your Name] from [Your Brand]. I came across your page recently and really love your style\u2014your feed feels super natural and genuine, and we\u2019d love to have you wear some of our jewelry.</p>\n      \n      <p>We design waterproof, skin-friendly silver pieces made for daily wear. We want to send you some items to keep and kick off an ongoing partnership.</p>\n      \n      <p><strong>What we offer:</strong></p>\n      <ul style=\"padding-left: 20px; margin: 8px 0;\">\n        <li>3\u20134 jewelry pieces of your choice</li>\n        <li>$25 cash commission on every order placed with your code</li>\n        <li>An exclusive discount code for your community</li>\n        <li>Future gifted drops as we release new collections</li>\n      </ul>\n      \n      <p><strong>A quick heads-up on the arrangement:</strong><br>\n      We cover 100% of the cost of the jewelry pieces, but we do ask you to cover the shipping cost directly for this first package. Once you post and make your first sale through your code you will get your 25$ commission</p>\n      \n      <p>No scripts or strict talking points\u2014we just want you to style the pieces your way and share your honest thoughts.</p>\n      \n      <p>Check out our pieces at <a href=\"https://www.yourbrand.com\" style=\"color: #111; text-decoration: underline;\">yourbrand.com</a>. If this sounds good to you, reply here and I\u2019ll send over your selection link!</p>\n      \n      <p style=\"margin-top: 24px;\">Warm regards,<br>\n      <strong>[Your Name]</strong><br>\n      Team | [Your Brand]</p>\n      \n      <hr style=\"border: none; border-top: 1px solid #e0e0e0; margin: 24px 0 16px 0;\" />\n      \n      <div style=\"font-size: 13px; color: #666; line-height: 1.5;\">\n        <p style=\"margin: 2px 0;\"><strong>[Your Brand]</strong> | You deserve the world\u2019s best</p>\n        <p style=\"margin: 2px 0;\"><a href=\"https://www.yourbrand.com\" style=\"color: #666;\">www.yourbrand.com</a> &nbsp;|&nbsp; <a href=\"mailto:contact@yourbrand.com\" style=\"color: #666;\">contact@yourbrand.com</a></p>\n        <p style=\"margin: 2px 0;\">[Your Business Address]</p>\n        <p style=\"margin: 6px 0 0 0;\">Enter our circle \u2728 IG: <strong>official.yourbrand</strong> | TikTok: <strong>yourbrand_tiktok</strong></p>\n      </div>\n    </div>\n  `;\n\n  return {\n    json: {\n      ...data,\n      subject: subject,\n      html: htmlBody,\n      body: htmlBody,\n      toEmail: toEmail\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -192,
+        -32
+      ],
+      "id": "255a3477-239f-4a39-88ce-3e4132473945",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "45acca7e-5c75-4e7a-8f9a-26f13e13fa06",
+              "leftValue": "={{ $json.email }}\n",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        32,
+        -32
+      ],
+      "id": "8139796a-2941-4b57-8ead-ca86e30d6d3c",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=\ud83d\ude80 Outreach Sent via Zoho!\n\n\ud83d\udc64 Creator: @{{ $('Code in JavaScript').item.json.username }} ({{ $('Code in JavaScript').item.json.followers }} followers)\n\u2709\ufe0f Sent to: {{ $('Code in JavaScript').item.json.email }}\n\ud83d\udccc Subject: {{ $('Code in JavaScript').item.json.subject }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        240
+      ],
+      "id": "5f76f495-73e5-4e9b-86e6-ca6a34cbd73a",
+      "name": "Send a text message",
+      "webhookId": "ee5b335b-31f9-4963-a868-887fe99e35e7",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://mail.zoho.com/api/accounts/YOUR_ZOHO_ACCOUNT_ID/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "fromAddress",
+              "value": "=outreach@yourbrand.com"
+            },
+            {
+              "name": "mailFormat",
+              "value": "=html"
+            },
+            {
+              "name": "toAddress",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "name": "subject",
+              "value": "={{ $json.subject }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.html }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        240
+      ],
+      "id": "9911c678-bdee-400d-9933-40096d361f07",
+      "name": "HTTP Request",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "YOUR_ZOHO_OAUTH2_CREDENTIAL_ID",
+          "name": "Unnamed credential"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "19d7fc44-ee30-4a0d-9fa6-8a5626e10902",
+  "meta": {
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "pXDjBeOILXywD1d2",
+  "tags": []
+}

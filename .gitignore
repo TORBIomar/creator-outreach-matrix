@@ -1,0 +1,40 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache & compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Browser automation profile & state (CRITICAL: Contains cookies, cache & auth sessions)
+browser_profile/
+*.session
+
+# Local scraper state & collected lead data (CRITICAL: Contains scraped personal data)
+seen_creators.txt
+leads_backup.jsonl
+*.csv
+*.jsonl
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Logs
+*.log
+logs/
+
+# Operating system & IDE artifacts
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo

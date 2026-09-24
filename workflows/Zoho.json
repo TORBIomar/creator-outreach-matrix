@@ -1,0 +1,325 @@
+{
+  "name": "Zoho",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "31faf0c9-4881-405c-84d4-8e4b2248a8e0",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "url": "https://mail.zoho.com/api/accounts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "91717ff8-7211-47b7-af77-b96853bbf3e9",
+      "name": "HTTP Request",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "YOUR_ZOHO_OAUTH2_CREDENTIAL_ID",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://mail.zoho.com/api/accounts/{{ $json.data[0].accountId }}/messages/view",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "92259a87-2d8a-430b-bb3e-a410551ff4c8",
+      "name": "HTTP Request1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "YOUR_ZOHO_OAUTH2_CREDENTIAL_ID",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "6147a13b-4b2f-4dfc-bb5b-845ed036d3be",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6686fc31-dc7e-433b-8b2d-d7c122a83752",
+              "leftValue": "={{ $json.fromAddress }}",
+              "rightValue": "zohoaccounts.com",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "f3db8625-91c2-401c-9d5c-5bdf4457f464",
+              "leftValue": "={{ $json.fromAddress }}",
+              "rightValue": "outreach@yourbrand.com",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "a331c281-bb10-444b-880a-99cf96eee911",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "Re:",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        0
+      ],
+      "id": "a6d7b145-feb3-4701-a7f8-3a08fb48fb0a",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:1234/v1/chat/completions",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"huihui-ai/qwen3-8b-abliterated\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are managing business relations for yourbrand.com. Analyze this email reply and summarize if they want to collaborate.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.summary }}\"\n    }\n  ],\n  \"temperature\": 0.2,\n  \"stream\": false\n}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        496,
+        320
+      ],
+      "id": "1d66633b-8462-4b0f-ac09-154584b6bb52",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=\ud83d\udcec *New Influencer Reply!*  *From:* {{ $('Split Out').item.json.fromAddress }} *Subject:* {{ $('Split Out').item.json.subject }}  *Hermes 3 Analysis:* {{ $json.response }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1168,
+        320
+      ],
+      "id": "28792cf8-1f6c-4d0d-820e-47423db3b1f6",
+      "name": "Send a text message",
+      "webhookId": "ee5b335b-31f9-4963-a868-887fe99e35e7",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let parsed = {};\n\n// Extract the response string from LM Studio (OpenAI format)\nlet llmOutput = $json.choices?.[0]?.message?.content || \"{}\";\n\ntry {\n  parsed = typeof llmOutput === 'string' ? JSON.parse(llmOutput) : llmOutput;\n} catch (e) {\n  parsed = { intent: \"unknown\", key_question: null, draft_reply: null };\n}\n\n// Safely access data from 'Split Out' or 'Filter'\nlet sourceItem = {};\ntry {\n  sourceItem = $('Split Out').item.json;\n} catch (err) {\n  try {\n    sourceItem = $('Filter').item.json;\n  } catch (err2) {\n    sourceItem = {};\n  }\n}\n\nreturn {\n  json: {\n    sender: sourceItem.sender || \"Unknown\",\n    fromAddress: sourceItem.fromAddress || null,\n    subject: sourceItem.subject || null,\n    summary: sourceItem.summary || null,\n    intent: parsed.intent || \"unknown\",\n    key_question: parsed.key_question || null,\n    draft_reply: parsed.draft_reply || null\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        320
+      ],
+      "id": "8d33bcf7-0dec-4585-9052-c3f8abb7e42d",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "45acca7e-5c75-4e7a-8f9a-26f13e13fa06",
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "declined",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        944,
+        320
+      ],
+      "id": "40db5f84-20d7-4480-9e93-748cb87aed5e",
+      "name": "Filter1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "91b6ff80-9e4c-4a1e-a57a-ce0e6adc7924",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "zqDSZ1MlkUUGMTk0",
+  "tags": []
+}

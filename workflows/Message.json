@@ -1,0 +1,140 @@
+{
+  "name": "Message",
+  "nodes": [
+    {
+      "parameters": {
+        "format": "resolved",
+        "dataPropertyAttachmentsPrefixName": "",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "25324751-b790-4a37-a5dd-2cca5fcb2693",
+      "name": "Email Trigger (IMAP)",
+      "credentials": {
+        "imap": {
+          "id": "YOUR_IMAP_CREDENTIAL_ID",
+          "name": "IMAP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d871165b-7c90-4ba5-a6f1-3de9a26506b2",
+              "leftValue": "={{ $json.subject ? $json.subject.toLowerCase() : '' }}",
+              "rightValue": "collab inquiry from [Your Brand]",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "2050e075-b626-4af0-8bf2-7b2c8d4eec1a",
+              "leftValue": "={{ $json.from.text }}",
+              "rightValue": "mailer-daemon",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "781c9dad-5a13-4644-ad1c-1d69750cc84b",
+              "leftValue": "={{ $json.from.text }}",
+              "rightValue": "outreach@yourbrand.com",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "8631dc6f-c829-41d3-ba22-e5299123ac29",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=\ud83d\udea8 *New Creator Reply Received!*\n\n*From:* {{ $json.from.text }}\n*Subject:* {{ $json.subject }}\n\n*Message Preview:*\n{{ $json.text ? $json.text.slice(0, 350) : \"No plain text preview available.\" }}...",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "c20463ff-8925-4267-a574-4bb09b8c89a6",
+      "name": "Send a text message",
+      "webhookId": "ba0252b6-3ec0-426f-bd77-a5a760120fc3",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Email Trigger (IMAP)": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ef37c077-15f0-47a7-b511-dfdf357a4329",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "RhUfnYQIfchsCmva",
+  "tags": []
+}
