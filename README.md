@@ -1,97 +1,92 @@
-# Creator Outreach Matrix
+<div align="center">
 
-An automated end-to-end influencer outreach pipeline designed for beauty, jewelry, GRWM, and lifestyle nano- & micro-influencers (10 – 5,000 followers). The system combines an evasive Playwright scraper with n8n workflow automations for transactional email outreach, AI intent classification of creator replies, and real-time Telegram notifications.
+# ⚡ Creator Outreach Matrix
+### *Autonomous TikTok Creator Discovery & AI-Powered Cold Outreach Engine*
+
+[![Python Version](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Playwright](https://img.shields.io/badge/Playwright-Evasive%20Scraper-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev)
+[![n8n](https://img.shields.io/badge/n8n-Automated%20Pipelines-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)](https://n8n.io)
+[![Zoho Mail](https://img.shields.io/badge/Zoho%20Mail-OAuth2%20API-0072C6?style=for-the-badge)](https://www.zoho.com/mail/)
+[![Telegram](https://img.shields.io/badge/Telegram-Realtime%20Alerts-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://telegram.org)
+
+<p align="center">
+  <b>A zero-friction, end-to-end influencer acquisition pipeline.</b><br>
+  Find qualified nano & micro-creators, bypass bot detection, resolve obfuscated emails & bio-links, dispatch branded collaboration emails via Zoho Mail API, analyze inbound replies with local LLMs, and receive instant Telegram alerts.
+</p>
 
 ---
 
-## 🏗️ System Architecture
+</div>
 
-```text
-┌─────────────────────────┐
-│  TikTok Search Matrix   │  Playwright (Anti-detection, resource blocking,
-│  & DOM / JSON Extractor │  DOM hydration parsing, Linktree fallback)
-└───────────┬─────────────┘
-            │ HTTP POST (Leads batch)
-            ▼
-┌─────────────────────────┐
-│     n8n Webhook         │  Splits leads, validates emails, applies custom HTML
-│   (workflows/Tiktok)    │  collaboration pitch, sends via Zoho Mail API
-└───────────┬─────────────┘
-            │
-      ┌─────┴─────────────────────────┐
-      ▼                               ▼
-┌──────────────┐              ┌──────────────┐
-│  Zoho Mail   │              │ Telegram Bot │
-│   Outreach   │              │ Alert (Sent) │
-└──────┬───────┘              └──────────────┘
-       │
-       │ (Creator replies to email)
-       ▼
-┌─────────────────────────┐
-│  Zoho Poller / IMAP     │  Detects inbound replies from creators,
-│  (workflows/Zoho,       │  filters spam & automated bounce-backs
-│   workflows/Message)    │
-└───────────┬─────────────┘
-            │
-            ▼
-┌─────────────────────────┐
-│  AI Intent Analysis     │  Evaluates response sentiment (interested / question /
-│   (LM Studio / OpenAI)  │  declined) and drafts personalized response
-└───────────┬─────────────┘
-            │
-            ▼
-┌─────────────────────────┐
-│  Telegram Notification  │  Real-time alert with reply preview & drafted response
-└─────────────────────────┘
+## 🌟 Key Highlights
+
+- **🎯 Precision Micro-Influencer Targeting**: Scrapes creators in targeted follower brackets (10 – 5,000 followers) using hydration script parsing (`__UNIVERSAL_DATA_FOR_REHYDRATION__` & `SIGI_STATE`) with DOM query fallbacks to prevent zero-follower extraction bugs.
+- **🛡️ Bot-Evasion & Route Blocking**: Runs persistent Chrome contexts with disabled automation flags (`--disable-blink-features=AutomationControlled`), test banner suppression, dynamic sleep jitter, and instant media route abortion (drops images/video streams for 3x–5x speed boost and minimal CPU/RAM).
+- **🔍 Deep Email Intelligence**: Detects obfuscated emails (`name (at) domain (dot) com`) and crawls external bio-links (Linktree, Beacons, custom personal portfolios) to uncover hidden business emails.
+- **🚫 Automated Quality & Region Filtering**: Skips commercial shops, talent agencies, UGC creators, salon booking pages, and non-shipping/sanctioned destinations.
+- **⚡ Fully Automated Outreach (n8n)**: Instant webhook ingestion pushes verified leads to Zoho Mail API for automated personalized cold outreach.
+- **🧠 Local AI Intent Parsing**: Listens for inbound replies, extracts intent using a local LLM (LM Studio / Ollama / OpenAI API format), drafts a smart response, and alerts your phone via Telegram.
+- **💾 Fail-Safe Data Backups**: All qualified leads are duplicated locally to JSONL before network requests, ensuring zero data loss if webhooks drop.
+
+---
+
+## 🏛️ System Architecture
+
+```mermaid
+flowchart TD
+    subgraph S1["1. Discovery Engine (Playwright)"]
+        A["TikTok Video Search Matrix\n(GRWM, Jewelry, Unboxing)"] --> B["Profile Ingestion\n(Followers: 10 - 5,000)"]
+        B --> C{"Quality & Region Filter"}
+        C -- Excluded Region / Agency --> D["Skip & Log Handle"]
+        C -- Passed --> E["Email Resolver\n(Bio Text + Linktree / Beacons)"]
+        E --> F["Local JSONL Backup\n(Zero-Data Loss)"]
+    end
+
+    subgraph S2["2. Cold Outreach Pipeline (n8n + Zoho Mail)"]
+        F --> G["n8n Ingestion Webhook\n(/webhook/tiktok-leads)"]
+        G --> H["Dynamic Split & Validation"]
+        H --> I["HTML Branded Pitch Injection"]
+        I --> J["Zoho Mail API Dispatch\n(OAuth2 Token)"]
+        J --> K["Telegram Bot Alert\n(Outreach Sent)"]
+    end
+
+    subgraph S3["3. Inbound Response & AI Engine"]
+        L["Creator Replies to Email"] --> M["Zoho Poller / IMAP Trigger"]
+        M --> N["Filter Bounce-backs & Spam"]
+        N --> O["Local LLM Intent Analysis\n(Qwen / Hermes 3 via LM Studio)"]
+        O --> P["Draft Personalized Response"]
+        P --> Q["Telegram Mobile Notification\n(Lead Summary + Draft)"]
+    end
+
+    S1 --> S2
+    S2 -. Response Loop .-> S3
 ```
 
 ---
 
-## 📁 Repository Structure
+## 📁 Repository Blueprint
 
 ```text
-├── live_tiktok_scraper.py       # Main production Playwright scraper
-├── scrape_tiktok.py             # Test script with mock lead payload
-├── workflows/                   # n8n Automation Workflows (Sanitized JSONs)
-│   ├── Tiktok.json              # Webhook receiver -> Zoho Mail sender -> Telegram alert
-│   ├── Zoho.json                # Inbound Zoho mail checker -> LLM Intent analysis -> Telegram
-│   └── Message.json             # IMAP mail trigger -> Filter -> Telegram alert
-├── templates/                   # Outreach and follow-up templates
-│   ├── initial_outreach_pitch.html     # HTML pitch template sent to discovered creators
-│   ├── collaboration_onboarding.txt   # Step-by-step catalog redemption instructions
-│   └── shipping_and_commission_faq.txt # Transparent FAQ addressing shipping & commissions
-├── requirements.txt             # Python dependencies
-├── .env.example                 # Environment variables template
-└── .gitignore                   # Excludes browser cache, session cookies, and scraped leads
+├── live_tiktok_scraper.py                 # High-performance, evasive Playwright scraper
+├── scrape_tiktok.py                       # Test dispatcher with mock payloads for testing n8n
+├── workflows/                             # Production-ready n8n workflow blueprints
+│   ├── Tiktok.json                        # Ingestion Webhook -> HTML Pitch -> Zoho Mail -> Telegram
+│   ├── Zoho.json                          # Poller -> LM Studio AI Intent Analysis -> Telegram
+│   └── Message.json                       # Real-time IMAP Trigger -> Spam Filter -> Telegram
+├── templates/                             # Battle-tested outreach email copies
+│   ├── initial_outreach_pitch.html        # Clean, responsive HTML brand collaboration pitch
+│   ├── collaboration_onboarding.txt      # Step-by-step catalog voucher & onboarding instructions
+│   └── shipping_and_commission_faq.txt    # Transparent FAQ addressing logistics & $25 payouts
+├── requirements.txt                       # Minimal dependencies (playwright, requests)
+├── .env.example                           # Sample configuration variables
+└── .gitignore                             # Prevents tracking browser sessions, cookies, & leads
 ```
 
 ---
 
-## ⚡ Scraper Features
+## 🚀 Quickstart Guide
 
-- **Granular Follower Targeting**: Filters creators between 10 and 5,000 followers via server-side hydration JSON (`__UNIVERSAL_DATA_FOR_REHYDRATION__` / `SIGI_STATE`) with DOM query fallbacks.
-- **Strict Region Filtering**: Excludes non-shipping destinations, sanctioned areas, and high shipping-cost regions before scraping.
-- **Commercial & Agency Filtering**: Detects and skips agencies, management firms, salon booking links, and UGC-only handles.
-- **Obfuscated Email Parsing**: Resolves disguised email patterns (e.g., `name (at) gmail (dot) com`, `name [at] domain.com`).
-- **Bio-Link Resolution**: Follows Linktree, Beacons, and custom website URLs in bio to uncover hidden contact emails.
-- **Resource Route Blocking**: Aborts heavy media (images, videos, fonts) during navigation for 3x–5x faster execution and low RAM/CPU usage.
-- **Anti-Bot & Human Emulation**: Suppresses automation indicators, removes `--no-sandbox` warning banners, randomizes search combinations, and applies natural cooldown periods.
-- **Data Persistence**: Automatically stores seen handles in `seen_creators.txt` and backs up verified leads locally in `leads_backup.jsonl`.
-
----
-
-## 🚀 Getting Started
-
-### 1. Prerequisites
-
-- Python 3.10+
-- Google Chrome installed locally
-- [n8n](https://n8n.io/) instance running (local or cloud)
-- [Optional] LM Studio / Ollama or OpenAI-compatible server for inbound intent parsing
-
-### 2. Installation
-
-Clone this repository and set up a virtual environment:
+### 1. Clone & Set Up Python Environment
 
 ```bash
 git clone https://github.com/TORBIomar/creator-outreach-matrix.git
@@ -103,9 +98,12 @@ pip install -r requirements.txt
 playwright install chromium
 ```
 
-### 3. Configuration
+> [!NOTE]
+> The scraper utilizes Google Chrome installed on your system for maximum bot evasion. Ensure Chrome is installed, or customize the `channel` flag in `live_tiktok_scraper.py`.
 
-Copy `.env.example` to `.env` and adjust the variables:
+### 2. Configure Environment
+
+Copy `.env.example` to `.env`:
 
 ```bash
 cp .env.example .env
@@ -113,49 +111,59 @@ cp .env.example .env
 
 | Variable | Description | Default |
 | :--- | :--- | :--- |
-| `N8N_WEBHOOK_URL` | Webhook URL where scraped leads are posted | `http://localhost:5678/webhook/tiktok-leads` |
-| `SEEN_FILE` | Path to file tracking previously processed creators | `seen_creators.txt` |
-| `BACKUP_LEADS_FILE` | Path to fallback jsonl file for leads | `leads_backup.jsonl` |
-| `USER_DATA_DIR` | Path to persistent browser profile directory | `browser_profile` |
+| `N8N_WEBHOOK_URL` | Endpoint where scraped leads are dispatched | `http://localhost:5678/webhook/tiktok-leads` |
+| `SEEN_FILE` | Local record of previously evaluated creators | `seen_creators.txt` |
+| `BACKUP_LEADS_FILE` | Fallback persistence file for qualified leads | `leads_backup.jsonl` |
+| `USER_DATA_DIR` | Chrome persistent session cache directory | `browser_profile` |
 
 ---
 
-## 🔄 n8n Workflows Setup
+## 🔄 Setting Up n8n Workflows
 
-Import the JSON files from the `workflows/` directory into your n8n workspace:
-
-1. **`workflows/Tiktok.json`**:
-   - Set up the **Zoho Mail OAuth2** credentials.
-   - Configure your **Zoho Account ID** in the HTTP Request node URL.
-   - Set your **Telegram Bot Token** and `chatId`.
-   - Update brand variables (brand name, links, address) inside the `Code in JavaScript` node.
-
-2. **`workflows/Zoho.json`**:
-   - Connects to Zoho Mail API to poll incoming creator responses.
-   - Forwards the email body to a local LLM endpoint (default: `http://localhost:1234/v1/chat/completions`) for classification.
-   - Sends Telegram notifications with summary and intent.
-
-3. **`workflows/Message.json`**:
-   - Alternative IMAP trigger for instant inbox notifications on incoming creator replies.
+1. Open your n8n workspace (e.g. `http://localhost:5678`).
+2. Go to **Workflows** -> Click **Import from File** (or drag & drop the files from [`workflows/`](file:///home/maro/Desktop/Tiktok-scraper-git/workflows/)):
+   - **`Tiktok.json`**: Connect your **Zoho Mail OAuth2** account, enter your Zoho Account ID, and provide your Telegram Bot Token & Chat ID.
+   - **`Zoho.json`**: Connects to Zoho Mail API to read incoming emails, routes them through a local LLM (e.g., LM Studio at `http://localhost:1234/v1/chat/completions`), and pings Telegram with the classification.
+   - **`Message.json`**: Alternative IMAP inbox watcher for immediate reply alerts.
+3. Activate the workflows.
 
 ---
 
-## 🏃 Running the Scraper
+## 🏃 Running the Engine
 
-Test the webhook connection with mock data:
+### Step 1: Validate Your Setup
+Send a batch of mock leads into n8n to test your Zoho Mail connection and Telegram bot:
 ```bash
 python scrape_tiktok.py
 ```
 
-Launch the live scraper:
+### Step 2: Launch Autonomous Discovery
+Start the live scraper:
 ```bash
 python live_tiktok_scraper.py
 ```
 
-To stop execution cleanly, press `Ctrl+C`. The scraper completes the active creator profile, preserves state in `seen_creators.txt`, and gracefully exits.
+* **Human Emulation**: Scrolls video search results, clicks profiles with randomized delays, and paces outreach in batches of 50.
+* **Graceful Exit**: Press `Ctrl+C` at any time. The scraper completes the active profile, preserves the `seen_creators.txt` index, and shuts down cleanly.
 
 ---
 
-## 🛡️ Privacy & Sensitive Data
+## 📧 Email Templates Included
 
-All personal identifiable information (PII), proprietary brand names, physical addresses, API keys, credential IDs, and Telegram chat IDs have been replaced with clear placeholders (`YOUR_TELEGRAM_CHAT_ID`, `YOUR_ZOHO_ACCOUNT_ID`, `outreach@yourbrand.com`, etc.) before publishing.
+Battle-tested templates are located in [`templates/`](file:///home/maro/Desktop/Tiktok-scraper-git/templates/):
+* **Initial Outreach**: High-converting HTML pitch highlighting gifting terms and affiliate upside.
+* **Onboarding Steps**: Step-by-step instructions on exploring collections and applying voucher codes.
+* **FAQ Reply**: Transparent handling of international logistics, weight-based shipping, and commission payouts.
+
+---
+
+## 🛡️ Privacy & Security Best Practices
+
+* **No Credentials in Git**: All tokens, API keys, chat IDs, and brand information have been completely scrubbed from this repository.
+* **Git-Protected Data**: Browser profiles (cookies/sessions) and collected lead data are strictly ignored via `.gitignore` to protect privacy and stay compliant.
+
+---
+
+<div align="center">
+  <sub>Built with precision for creators, brands, and growth engineers.</sub>
+</div>
