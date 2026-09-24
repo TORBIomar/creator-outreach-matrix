@@ -564,6 +564,7 @@ async def process_profile(page, profile_url: str, seen_users: set) -> bool:
         lead_record = {
             "username": username,
             "profile_url": profile_url,
+            "followers": followers,
             "followers_count": followers,
             "bio": bio_text,
             "email": email,
