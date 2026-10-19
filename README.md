@@ -53,6 +53,9 @@ playwright install chromium
 # Copy and configure environment variables
 cp .env.example .env
 
+# Run unit tests
+python3 -m unittest discover -s tests -p '*_test.py' -v
+
 # Run scraper
 python live_tiktok_scraper.py
 ```
