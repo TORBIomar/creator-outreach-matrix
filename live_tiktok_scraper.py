@@ -26,6 +26,12 @@ from urllib.parse import urlparse, parse_qs, unquote, quote_plus
 import requests
 from playwright.async_api import async_playwright
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # ---------------- CONFIG ----------------
 N8N_PRODUCTION_WEBHOOK = os.getenv("N8N_WEBHOOK_URL", "http://localhost:5678/webhook/tiktok-leads")
 SEEN_FILE = os.path.expanduser("~/tiktok-scraper/seen_creators.txt")
