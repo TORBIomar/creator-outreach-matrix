@@ -31,6 +31,8 @@ flowchart LR
 ```
 
 - **🕵️ Anti-Fingerprint Scraping**: Evasive Playwright automation bypassing TikTok captcha heuristics and rate limits.
+- **💾 Persistent SeenStore**: Low-overhead deduplication store keeping tracked creators in memory with instant disk persistence.
+- **🛡️ Fault-Tolerant Backup**: Automatic local jsonl backup preserves captured leads if webhook endpoints become unavailable.
 - **✉️ Automated Outreach**: Dynamic cold-pitch dispatching configured with Zoho OAuth2 API.
 - **🧠 AI Intent Analysis**: Automatic classification of inbound replies (Interested, Price Quote, Decline) using LLMs.
 - **📱 Real-Time Notifications**: Instant mobile push alerts on Telegram when creators accept collaboration terms.
