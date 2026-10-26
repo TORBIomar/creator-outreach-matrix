@@ -74,6 +74,9 @@ for saved state, retries, held leads, tuning and migration from existing backups
 The original `live_tiktok_scraper.py` remains available for existing setups.
 Offline tests use temporary databases and mocked network calls. Live browser and
 n8n delivery behavior must be checked in your own environment.
+GitHub Actions runs the offline tests on Python 3.10 and 3.13 for pushes and pull
+requests to `main`. No TikTok login, browser installation or service credentials
+are needed for these checks.
 
 ## n8n setup
 
