@@ -12,6 +12,11 @@ __pycache__/
 
 # Browser automation profile & state (CRITICAL: Contains cookies, cache & auth sessions)
 browser_profile/
+scraper_v2_state/
+*browser_profile*/
+playwright/.auth/
+storage_state*.json
+cookies*.json
 *.session
 
 # Local scraper state & collected lead data (CRITICAL: Contains scraped personal data)
@@ -19,13 +24,24 @@ seen_creators.txt
 leads_backup.jsonl
 *.csv
 *.jsonl
+*.sqlite
+*.sqlite3
+*.sqlite*
+*.db
+*.db-*
+run.lock
 
 # Environment variables & secrets
 .env
+.env.*
+!.env.example
 .env.local
 .env.*.local
 *.pem
 *.key
+credentials*.json
+*credentials*.json
+workflow-exports-private/
 
 # Logs
 *.log

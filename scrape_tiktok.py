@@ -1,16 +1,20 @@
 import os
 import json
 import requests
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 # n8n webhook endpoint (configurable via environment variable)
-WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "http://localhost:5678/webhook-test/tiktok-leads")
+WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "http://localhost:5678/webhook/tiktok-leads")
 
 mock_payload = {
     "leads": [
         {
             "username": "fashion_mia",
             "profile_url": "https://www.tiktok.com/@fashion_mia",
-            "bio": "Minimal everyday style ✨\nJewelry & PR: collabs.mia@fashionagency.com\nBased in NYC 📍",
+            "bio": "Minimal everyday style ✨\nJewelry & PR: creator.one@example.com\nBased in NYC 📍",
         },
         {
             "username": "daily_vibe_check",
@@ -20,7 +24,7 @@ mock_payload = {
         {
             "username": "luxe_aesthetics",
             "profile_url": "https://www.tiktok.com/@luxe_aesthetics",
-            "bio": "Gold layers & accessories 💍\nBusiness inquiries: partnerships@luxeaesthetic.io",
+            "bio": "Gold layers & accessories 💍\nBusiness inquiries: creator.two@example.com",
         },
     ]
 }

@@ -13,14 +13,8 @@
         0,
         0
       ],
-      "id": "25324751-b790-4a37-a5dd-2cca5fcb2693",
-      "name": "Email Trigger (IMAP)",
-      "credentials": {
-        "imap": {
-          "id": "YOUR_IMAP_CREDENTIAL_ID",
-          "name": "IMAP account"
-        }
-      }
+      "id": "95e48b71-330d-507f-b791-8d7b3964f4aa",
+      "name": "Email Trigger (IMAP)"
     },
     {
       "parameters": {
@@ -53,7 +47,7 @@
             {
               "id": "781c9dad-5a13-4644-ad1c-1d69750cc84b",
               "leftValue": "={{ $json.from.text }}",
-              "rightValue": "outreach@yourbrand.com",
+              "rightValue": "sender@example.com",
               "operator": {
                 "type": "string",
                 "operation": "notContains"
@@ -70,13 +64,13 @@
         224,
         0
       ],
-      "id": "8631dc6f-c829-41d3-ba22-e5299123ac29",
+      "id": "8f061807-187c-5468-80a9-be90c94e2084",
       "name": "Filter"
     },
     {
       "parameters": {
         "chatId": "YOUR_TELEGRAM_CHAT_ID",
-        "text": "=\ud83d\udea8 *New Creator Reply Received!*\n\n*From:* {{ $json.from.text }}\n*Subject:* {{ $json.subject }}\n\n*Message Preview:*\n{{ $json.text ? $json.text.slice(0, 350) : \"No plain text preview available.\" }}...",
+        "text": "=🚨 *New Creator Reply Received!*\n\n*From:* {{ $json.from.text }}\n*Subject:* {{ $json.subject }}\n\n*Message Preview:*\n{{ $json.text ? $json.text.slice(0, 350) : \"No plain text preview available.\" }}...",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
@@ -87,15 +81,8 @@
         448,
         0
       ],
-      "id": "c20463ff-8925-4267-a574-4bb09b8c89a6",
-      "name": "Send a text message",
-      "webhookId": "ba0252b6-3ec0-426f-bd77-a5a760120fc3",
-      "credentials": {
-        "telegramApi": {
-          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
-          "name": "Telegram account"
-        }
-      }
+      "id": "ed1aee71-7b04-5673-b040-1d3c1d5f9699",
+      "name": "Send a text message"
     }
   ],
   "pinData": {},
@@ -123,18 +110,8 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
-    "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
-  },
-  "versionId": "ef37c077-15f0-47a7-b511-dfdf357a4329",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "YOUR_N8N_INSTANCE_ID"
-  },
-  "nodeGroups": [],
-  "id": "RhUfnYQIfchsCmva",
-  "tags": []
+    "executionOrder": "v1"
+  }
 }

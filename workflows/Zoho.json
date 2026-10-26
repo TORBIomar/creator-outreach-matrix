@@ -9,8 +9,8 @@
         0,
         0
       ],
-      "id": "31faf0c9-4881-405c-84d4-8e4b2248a8e0",
-      "name": "When clicking \u2018Execute workflow\u2019"
+      "id": "bed64504-6e82-54ae-be34-cfbb7ada7b49",
+      "name": "When clicking ‘Execute workflow’"
     },
     {
       "parameters": {
@@ -27,14 +27,8 @@
         224,
         0
       ],
-      "id": "91717ff8-7211-47b7-af77-b96853bbf3e9",
-      "name": "HTTP Request",
-      "credentials": {
-        "oAuth2Api": {
-          "id": "YOUR_ZOHO_OAUTH2_CREDENTIAL_ID",
-          "name": "Unnamed credential"
-        }
-      }
+      "id": "d3989f60-c750-5ea6-8c66-632d35db43ec",
+      "name": "HTTP Request"
     },
     {
       "parameters": {
@@ -49,14 +43,8 @@
         448,
         0
       ],
-      "id": "92259a87-2d8a-430b-bb3e-a410551ff4c8",
-      "name": "HTTP Request1",
-      "credentials": {
-        "oAuth2Api": {
-          "id": "YOUR_ZOHO_OAUTH2_CREDENTIAL_ID",
-          "name": "Unnamed credential"
-        }
-      }
+      "id": "9bf18f70-2b35-5137-822e-0ec66e9ad3c5",
+      "name": "HTTP Request1"
     },
     {
       "parameters": {
@@ -69,7 +57,7 @@
         672,
         0
       ],
-      "id": "6147a13b-4b2f-4dfc-bb5b-845ed036d3be",
+      "id": "c8ddcce8-4f87-54cf-86c9-2408c154c322",
       "name": "Split Out"
     },
     {
@@ -94,7 +82,7 @@
             {
               "id": "f3db8625-91c2-401c-9d5c-5bdf4457f464",
               "leftValue": "={{ $json.fromAddress }}",
-              "rightValue": "outreach@yourbrand.com",
+              "rightValue": "sender@example.com",
               "operator": {
                 "type": "string",
                 "operation": "notEquals"
@@ -122,7 +110,7 @@
         896,
         0
       ],
-      "id": "a6d7b145-feb3-4701-a7f8-3a08fb48fb0a",
+      "id": "3766ec33-e9ef-5fcb-aaca-23b4f26c72e2",
       "name": "Filter"
     },
     {
@@ -131,7 +119,7 @@
         "url": "http://localhost:1234/v1/chat/completions",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "{\n  \"model\": \"huihui-ai/qwen3-8b-abliterated\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are managing business relations for yourbrand.com. Analyze this email reply and summarize if they want to collaborate.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.summary }}\"\n    }\n  ],\n  \"temperature\": 0.2,\n  \"stream\": false\n}",
+        "jsonBody": "{\n  \"model\": \"huihui-ai/qwen3-8b-abliterated\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are managing business relations for example.com. Analyze this email reply and summarize if they want to collaborate.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.summary }}\"\n    }\n  ],\n  \"temperature\": 0.2,\n  \"stream\": false\n}",
         "options": {
           "timeout": 300000
         }
@@ -142,13 +130,13 @@
         496,
         320
       ],
-      "id": "1d66633b-8462-4b0f-ac09-154584b6bb52",
+      "id": "2f4b330d-2426-57de-8dfc-c4bbe8642fa1",
       "name": "HTTP Request2"
     },
     {
       "parameters": {
         "chatId": "YOUR_TELEGRAM_CHAT_ID",
-        "text": "=\ud83d\udcec *New Influencer Reply!*  *From:* {{ $('Split Out').item.json.fromAddress }} *Subject:* {{ $('Split Out').item.json.subject }}  *Hermes 3 Analysis:* {{ $json.response }}",
+        "text": "=📬 *New Influencer Reply!*  *From:* {{ $('Split Out').item.json.fromAddress }} *Subject:* {{ $('Split Out').item.json.subject }}  *Hermes 3 Analysis:* {{ $json.response }}",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
@@ -159,15 +147,8 @@
         1168,
         320
       ],
-      "id": "28792cf8-1f6c-4d0d-820e-47423db3b1f6",
-      "name": "Send a text message",
-      "webhookId": "ee5b335b-31f9-4963-a868-887fe99e35e7",
-      "credentials": {
-        "telegramApi": {
-          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
-          "name": "Telegram account"
-        }
-      }
+      "id": "0dc38520-99fa-5899-be4f-eda9d6fda7bd",
+      "name": "Send a text message"
     },
     {
       "parameters": {
@@ -179,7 +160,7 @@
         720,
         320
       ],
-      "id": "8d33bcf7-0dec-4585-9052-c3f8abb7e42d",
+      "id": "098798fe-e593-50c9-922d-6c25449f837b",
       "name": "Code in JavaScript"
     },
     {
@@ -213,13 +194,13 @@
         944,
         320
       ],
-      "id": "40db5f84-20d7-4480-9e93-748cb87aed5e",
+      "id": "140e7e37-c158-58d2-9d6f-a3795417f173",
       "name": "Filter1"
     }
   ],
   "pinData": {},
   "connections": {
-    "When clicking \u2018Execute workflow\u2019": {
+    "When clicking ‘Execute workflow’": {
       "main": [
         [
           {
@@ -310,16 +291,6 @@
   },
   "active": false,
   "settings": {
-    "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
-  },
-  "versionId": "91b6ff80-9e4c-4a1e-a57a-ce0e6adc7924",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "YOUR_N8N_INSTANCE_ID"
-  },
-  "nodeGroups": [],
-  "id": "zqDSZ1MlkUUGMTk0",
-  "tags": []
+    "executionOrder": "v1"
+  }
 }
